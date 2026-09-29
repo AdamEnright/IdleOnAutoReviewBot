@@ -124,8 +124,11 @@ class Grimoire:
         for upgrade in self.upgrades.values():
             upgrade.calculate(grimoire_multi, self.stacks)
 
-    def calculate_bone_sources(self, deathbringers, sneaking, caverns, all_assets, arcade, lab_jewels, emperor):
+    def calculate_bone_sources(self, deathbringers, sneaking, caverns, all_assets, hatrack_bones, arcade, lab_jewels, emperor):
         # if ("GrimoireBonesDropDEC" == e)
+        # Racked hood scales with the rack, else worn
+        self.hood_owned = hatrack_bones > 0 or all_assets.get('EquipmentHats112').amount > 0
+        self.hood_value = hatrack_bones or 25 * self.hood_owned
         grimoire_preset_level = 100
         tombstone_preset_level = 100
         for db in deathbringers:
@@ -143,7 +146,7 @@ class Grimoire:
             mga=ValueToMulti(sneaking.pristine_charms['Glimmerchain'].value),
             mgb=ValueToMulti(grimoire_percent),
             mgc=ValueToMulti(caverns.caves['Gambit'].bonuses[12].value),
-            mgd=ValueToMulti((25 * min(1, all_assets.get('EquipmentHats112').amount))),
+            mgd=ValueToMulti(min(50, self.hood_value)),
             mge=ValueToMulti(
                 self.upgrades["Bones o' Plenty"].total_value
                 + (self.upgrades['Bovinae Hoarding'].total_value * safer_math_log(self.bones[3], 'Lava'))
